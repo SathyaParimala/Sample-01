@@ -1,0 +1,39 @@
+version: v1
+name: snowflaketestcluster
+type: cluster
+description: the new snowflake cluster is used to save the snowflake database
+tags:
+  - cluster
+  - snowflake
+cluster:
+  compute: query-default
+  runaAsUser: snowflake-cluster
+  minerva:
+    replicas: 1
+    selector:
+      users:
+        - "**"
+      sources:
+        - "**"
+    resources:
+      limits:
+        cpu: 4000m
+        memory: 8Gi
+      requests:
+        cpu: 2000m
+        memory: 4Gi
+    debug:
+      logLevel: INFO
+      trinoLogLevel: ERROR
+    depots:
+      - address: dataos://icebase:default
+        properties:
+          iceberg.file-format: PARQUET
+          iceberg.compression-codec: GZIP
+          hive.config.resources: "/usr/trino/etc/catalog/core-site.xml"
+      - address: dataos://retailsnowflaketest:default
+    catalogs:
+      - name: cache
+        type: memory
+        properties:
+          memory.max-data-per-node: "128MB"
